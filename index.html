@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="nuit">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#18c3d4">
+  <title>R·Typons</title>
+  <link rel="icon" href="assets/favicon.ico" sizes="any">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <script>
+    // Enregistrement du service worker (PWA). Inline volontairement pour
+    // rester hors du périmètre des modules JS/CSS.
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('sw.js').catch(function () {});
+      });
+    }
+  </script>
+
+  <!-- Polices -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=Overpass+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0&display=swap" rel="stylesheet">
+
+  <!-- OpenLayers -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@10.3.1/ol.css">
+
+  <!-- Styles (bundle minifié) -->
+  <link rel="stylesheet" href="styles/app.min.css">
+</head>
+<body>
+
+  <!-- Carte plein écran -->
+  <div id="map" class="map"></div>
+
+  <!-- Console -->
+  <aside id="console" class="console" data-state="collapsed">
+    <header class="console__head" id="consoleHead">
+      <div class="brand">
+        <span class="material-symbols-rounded brand__mark" aria-hidden="true">travel_explore</span>
+        <span class="brand__text">
+          <span class="brand__name">R·Typons</span>
+          <span class="brand__sub">ARTIS · CARTO 200 V3</span>
+        </span>
+      </div>
+      <div class="console__head-actions">
+        <button id="settingsBtn" class="icon-btn icon-btn--round" type="button" aria-label="Réglages">
+          <span class="material-symbols-rounded">tune</span>
+        </button>
+        <span class="material-symbols-rounded console__chevron" aria-hidden="true">expand_less</span>
+      </div>
+    </header>
+
+    <div class="console__body">
+
+      <!-- Action principale : Me localiser -->
+      <button id="locateBtn" class="locate" type="button">
+        <span class="material-symbols-rounded">my_location</span>
+        Me localiser
+      </button>
+
+      <!-- Décodeur manuel + résultat (une seule carte) -->
+      <section class="panel">
+        <h2 class="panel__title">Décoder un typon</h2>
+        <div class="field">
+          <input id="planInput" type="text" inputmode="latin" autocomplete="off"
+                 placeholder="171-01-00032-00024-15-A-02" maxlength="30"
+                 aria-label="Numéro de typon CARTO 200">
+          <button id="planBtn" class="btn" type="button" aria-label="Localiser le typon"><span class="material-symbols-rounded">pin_drop</span></button>
+        </div>
+
+        <div id="readout" class="readout" hidden aria-live="polite">
+          <div class="readout__grid">
+            <div class="ro-cell"><span class="ro-label">Latitude</span><span class="ro-val" id="roLat">—</span></div>
+            <div class="ro-cell"><span class="ro-label">Longitude</span><span class="ro-val" id="roLon">—</span></div>
+            <div class="ro-cell"><span class="ro-label">X Lambert</span><span class="ro-val" id="roX">—</span></div>
+            <div class="ro-cell"><span class="ro-label">Y Lambert</span><span class="ro-val" id="roY">—</span></div>
+            <div class="ro-cell ro-cell--wide"><span class="ro-label">Projection</span><span class="ro-val" id="roProj">—</span></div>
+            <div class="ro-cell ro-cell--wide"><span class="ro-label">Adresse la plus proche</span><span class="ro-val" id="roAdr">—</span></div>
+            <div class="ro-cell ro-cell--wide"><span class="ro-label">Commune</span><span class="ro-val" id="roCom">—</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recherche d'adresse -->
+      <section class="panel">
+        <h2 class="panel__title">Rechercher une adresse</h2>
+        <div class="field">
+          <input id="adrInput" type="text" autocomplete="off"
+                 placeholder="Rue Saboly, Sorgues" aria-label="Adresse">
+          <button id="adrBtn" class="btn btn--ghost" type="button" aria-label="Rechercher"><span class="material-symbols-rounded">search</span></button>
+        </div>
+      </section>
+
+    </div>
+
+    <footer class="console__foot">© IGN Géoplateforme · Adresse (BAN) · OpenStreetMap</footer>
+  </aside>
+
+  <!-- Tiroir réglages -->
+  <div id="settingsOverlay" class="drawer-overlay" hidden></div>
+  <aside id="settingsPanel" class="drawer" aria-label="Réglages" hidden>
+    <header class="drawer__head">
+      <h2 class="drawer__title">Réglages</h2>
+      <button id="settingsClose" class="icon-btn icon-btn--round" type="button" aria-label="Fermer les réglages">
+        <span class="material-symbols-rounded">close</span>
+      </button>
+    </header>
+    <div class="drawer__body">
+
+      <section class="panel">
+        <h3 class="panel__title">Fond de carte</h3>
+        <div id="baseLayers" class="seg seg--wrap" role="group" aria-label="Fond de carte">
+          <button class="seg__btn is-active" data-layer="plan" type="button">Plan IGN</button>
+          <button class="seg__btn" data-layer="ortho" type="button">Satellite</button>
+          <button class="seg__btn" data-layer="topo" type="button">Carte IGN Old-School</button>
+          <button class="seg__btn" data-layer="esri" type="button">ESRI Topo</button>
+          <button class="seg__btn" data-layer="osm" type="button">OSM</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h3 class="panel__title">Calques</h3>
+        <label class="switch">
+          <input type="checkbox" id="cadastreToggle">
+          Parcelles cadastrales
+        </label>
+      </section>
+
+      <section class="panel">
+        <h3 class="panel__title">Thème</h3>
+        <div id="themeSeg" class="seg" role="group" aria-label="Thème">
+          <button class="seg__btn" data-theme-key="nuit" type="button">
+            <span class="material-symbols-rounded">dark_mode</span>Nuit
+          </button>
+          <button class="seg__btn" data-theme-key="jour" type="button">
+            <span class="material-symbols-rounded">light_mode</span>Jour
+          </button>
+          <button class="seg__btn" data-theme-key="soleil" type="button">
+            <span class="material-symbols-rounded">wb_sunny</span>Soleil
+          </button>
+        </div>
+      </section>
+
+    </div>
+  </aside>
+
+  <!-- Bibliothèques (globales : proj4, ol) — chargées avant les modules -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.2/proj4.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ol@10.3.1/dist/ol.js"></script>
+
+  <!-- Application (bundle minifié) -->
+  <script src="js/app.min.js"></script>
+</body>
+</html>
