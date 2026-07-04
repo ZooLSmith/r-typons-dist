@@ -113,12 +113,22 @@
 
       <section class="panel">
         <h3 class="panel__title">Fond de carte</h3>
-        <div id="baseLayers" class="seg seg--wrap" role="group" aria-label="Fond de carte">
-          <button class="seg__btn is-active" data-layer="plan" type="button">Plan IGN</button>
-          <button class="seg__btn" data-layer="ortho" type="button">Satellite</button>
-          <button class="seg__btn" data-layer="topo" type="button">Carte IGN Old-School</button>
-          <button class="seg__btn" data-layer="esri" type="button">ESRI Topo</button>
-          <button class="seg__btn" data-layer="osm" type="button">OSM</button>
+        <div id="baseLayers" class="map-picker" role="group" aria-label="Fond de carte">
+          <button class="mapbtn is-active" data-layer="plan" type="button" title="Plan IGN" aria-label="Plan IGN">
+            <img src="assets/cartes/ign_v2.jpg" alt="" loading="lazy" width="120" height="120">
+          </button>
+          <button class="mapbtn" data-layer="ortho" type="button" title="Satellite" aria-label="Satellite">
+            <img src="assets/cartes/satellite.jpg" alt="" loading="lazy" width="120" height="120">
+          </button>
+          <button class="mapbtn" data-layer="topo" type="button" title="Carte IGN Old-School" aria-label="Carte IGN Old-School">
+            <img src="assets/cartes/oldschool.jpg" alt="" loading="lazy" width="120" height="120">
+          </button>
+          <button class="mapbtn" data-layer="esri" type="button" title="ESRI Topo" aria-label="ESRI Topo">
+            <img src="assets/cartes/esri.jpg" alt="" loading="lazy" width="120" height="120">
+          </button>
+          <button class="mapbtn" data-layer="osm" type="button" title="OpenStreetMap" aria-label="OpenStreetMap">
+            <img src="assets/cartes/openstreetmap.jpg" alt="" loading="lazy" width="120" height="120">
+          </button>
         </div>
       </section>
 
