@@ -1,7 +1,7 @@
 {
-  "name": "R·Typons — Décodeur CARTO 200 V3",
+  "name": "R·Typons — CARTO 200 V3",
   "short_name": "R·Typons",
-  "description": "Retrouvez le typon CARTO 200 V3 couvrant votre position.",
+  "description": "Retrouvez les plans CARTO 200 V3 sur fond cartographique IGN. Sur le chantier, localisez d'un geste le typon couvrant votre position, avec cadastre et réseaux électricité/gaz en option.",
   "lang": "fr",
   "dir": "ltr",
   "start_url": "./",
