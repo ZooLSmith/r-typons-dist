@@ -19,6 +19,30 @@
     }
   </script>
 
+  <!-- ============================================================
+       Google Analytics 4 (mesure d'audience). ID de mesure : G-52B326KCB4.
+       Consentement RGPD : par DÉFAUT « denied » → aucun cookie, seules
+       des mesures anonymes partent tant que l'utilisateur n'a pas accepté
+       (bannière). GA4 n'expose jamais l'adresse IP ; il en déduit une ville
+       approximative puis la jette. La granularité fine « zone consultée »
+       vient de nos événements (commune du typon), pas de l'IP.
+       ============================================================ -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-52B326KCB4"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    // Consentement par défaut : tout refusé (mis à jour par la bannière).
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      analytics_storage: 'denied',
+      wait_for_update: 500
+    });
+    gtag('config', 'G-52B326KCB4');
+  </script>
+
   <!-- Polices -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,7 +64,7 @@
   <aside id="console" class="console" data-state="collapsed">
     <header class="console__head" id="consoleHead">
       <div class="brand">
-        <span class="material-symbols-rounded brand__mark" aria-hidden="true">travel_explore</span>
+        <img class="brand__mark" src="assets/logo.svg" alt="" aria-hidden="true" width="40" height="30">
         <span class="brand__text">
           <span class="brand__name">R·Typons</span>
           <span class="brand__sub">CARTO 200 V3</span>
@@ -205,8 +229,29 @@
         </div>
       </section>
 
+      <section class="panel">
+        <h3 class="panel__title">Confidentialité</h3>
+        <button id="consentReopen" class="btn btn--ghost btn--wide" type="button">
+          <span class="material-symbols-rounded">privacy_tip</span>
+          Gérer la mesure d'audience
+        </button>
+      </section>
+
     </div>
   </aside>
+
+  <!-- Bannière de consentement (mesure d'audience) — masquée jusqu'au 1er choix -->
+  <div id="consent" class="consent" role="dialog" aria-label="Mesure d'audience" hidden>
+    <p class="consent__text">
+      On mesure l'usage de R·Typons pour améliorer son accessibilité et les
+      fonctionnalités utilisées. <strong>Aucune donnée personnelle n'est revendue
+      ni partagée</strong>, et vous pouvez refuser.
+    </p>
+    <div class="consent__actions">
+      <button id="consentRefuse" class="consent__btn consent__btn--ghost" type="button">Refuser</button>
+      <button id="consentAccept" class="consent__btn" type="button">Accepter</button>
+    </div>
+  </div>
 
   <!-- Bibliothèques (globales : proj4, ol) — chargées avant les modules -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.2/proj4.js"></script>
